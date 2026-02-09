@@ -1,9 +1,11 @@
 import { basketRoutes } from "./basket.routes";
+import { ordersRoutes } from "./order.routes";
 import { productsRoutes } from "./product.routes";
 import { usersRoutes } from "./users.routes";
 
 export const routes = [
   usersRoutes,
   productsRoutes,
-  basketRoutes
+  basketRoutes,
+  ordersRoutes,
 ];

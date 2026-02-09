@@ -2,10 +2,12 @@ import { and, eq } from "drizzle-orm";
 import { db } from "../../infrastructure/db/client";
 import { basketItemsSchema } from "../../infrastructure/db/schema/basket_items";
 import { productsSchema } from "../../infrastructure/db/schema/products";
+import { PostgresJsDatabase } from "drizzle-orm/postgres-js";
 
 class BasketItemsRepository {
   async create(basketId: string, productId: string, quantity: number) {
-    return db.insert(basketItemsSchema)
+    return db
+      .insert(basketItemsSchema)
       .values({ basketId, productId, quantity })
       .returning();
   }
@@ -39,7 +41,8 @@ class BasketItemsRepository {
   }
 
   async getItem(basketId: string, productId: string) {
-    const [item] =  await db.select()
+    const [item] = await db
+      .select()
       .from(basketItemsSchema)
       .where(
         and(
@@ -52,8 +55,10 @@ class BasketItemsRepository {
       return item ?? null;
   }
 
-  async removeItem(id: string) {
-    return db.delete(basketItemsSchema)
+  async clear(id: string, tx?: PostgresJsDatabase<any>) {
+    const executor = tx ?? db;
+    return await executor
+      .delete(basketItemsSchema)
       .where(eq(basketItemsSchema.id, id));
   }
 }
