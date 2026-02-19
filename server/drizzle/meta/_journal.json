@@ -36,6 +36,20 @@
       "when": 1770563696207,
       "tag": "0004_bent_cyclops",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1771522148500,
+      "tag": "0005_fat_siren",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1771522180838,
+      "tag": "0006_bent_dust",
+      "breakpoints": true
     }
   ]
 }

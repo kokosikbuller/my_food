@@ -1,7 +1,14 @@
 import { db } from "../client";
+import { categoriesSchema } from "../schema/categories";
 import { productsSchema } from "../schema/products";
 
 export async function seedProducts() {
+  const categories = await db.select().from(categoriesSchema);
+
+  const catByName = Object.fromEntries(
+    categories.map((c) => [c.name, c.id])
+  );
+
   const products = [
     {
       title: "Espresso",
@@ -10,6 +17,7 @@ export async function seedProducts() {
       count: 50,
       price: 2500,
       image: "https://truffle.pythonanywhere.com/media/products/cherry-cinnamon-truffle.jpg",
+      categoryId: catByName["Coffee"]
     },
     {
       title: "Cappuccino",
@@ -18,6 +26,7 @@ export async function seedProducts() {
       count: 40,
       price: 3500,
       image: "https://truffle.pythonanywhere.com/media/products/cherry-cinnamon-truffle.jpg",
+      categoryId: catByName["Coffee"]
     },
     {
       title: "Latte",
@@ -26,6 +35,7 @@ export async function seedProducts() {
       count: 30,
       price: 4000,
       image: "https://truffle.pythonanywhere.com/media/products/cherry-cinnamon-truffle.jpg",
+      categoryId: catByName["Coffee"]
     },
     {
       title: "Green Tea",
@@ -34,6 +44,7 @@ export async function seedProducts() {
       count: 60,
       price: 2000,
       image: "https://truffle.pythonanywhere.com/media/products/vegan-molochnyi-triufel-cherkasy_5FgHxIX.jpg",
+      categoryId: catByName["Tea"]
     },
     {
       title: "Black Tea",
@@ -42,6 +53,7 @@ export async function seedProducts() {
       count: 50,
       price: 1800,
       image: "https://truffle.pythonanywhere.com/media/products/vegan-molochnyi-triufel-cherkasy_5FgHxIX.jpg",
+      categoryId: catByName["Tea"]
     },
     {
       title: "Chocolate Muffin",
@@ -50,6 +62,7 @@ export async function seedProducts() {
       count: 25,
       price: 3000,
       image: "https://truffle.pythonanywhere.com/media/products/vegan-molochnyi-triufel-cherkasy_5FgHxIX.jpg",
+      categoryId: catByName["Muffins"]
     },
     {
       title: "Blueberry Muffin",
@@ -58,6 +71,7 @@ export async function seedProducts() {
       count: 25,
       price: 3200,
       image: "https://truffle.pythonanywhere.com/media/products/hazelnut-truffle-vegan.jpg",
+      categoryId: catByName["Muffins"]
     },
     {
       title: "Sandwich",
@@ -66,19 +80,11 @@ export async function seedProducts() {
       count: 35,
       price: 4500,
       image: "https://truffle.pythonanywhere.com/media/products/hazelnut-truffle-vegan.jpg",
+      categoryId: catByName["Snacks"]
     },
   ];
 
-  await db.insert(productsSchema).values(products);
-  console.log("Seeded 8 products successfully!");
-}
 
-// Для запуска через Bun / Node:
-if (require.main === module) {
-  seedProducts()
-    .then(() => process.exit(0))
-    .catch((err) => {
-      console.error(err);
-      process.exit(1);
-    });
+  await db.insert(productsSchema).values(products);
+  console.log("Products seeded");
 }
