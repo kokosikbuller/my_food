@@ -4,6 +4,8 @@ import { orderItemsRepository } from "../../../domain/repositories/order-items.r
 import { orderRepository } from "../../../domain/repositories/order.repository";
 import productRepository from "../../../domain/repositories/product.repository";
 import { db } from "../../../infrastructure/db/client";
+import { monoClient } from "../../../infrastructure/payments/mono.client";
+import { createPaymentUseCase } from "../../payments/use-cases/create-payment.usecase";
 
 class CreateOrderUseCase {
   async execute(userId: string) {
@@ -57,7 +59,17 @@ class CreateOrderUseCase {
 
       await basketItemsRepository.clear(basket.id, tx);
 
-      return order;
+      // console.log('order', order);
+
+      // const paymentPayload = await createPaymentUseCase.execute(order.id);
+
+      // if(!paymentPayload) {
+      //   throw new Error('Error payload');
+      // }
+
+      // const monoData = await monoClient.createInvoice(paymentPayload);
+
+      return {order};
     });
   }
 }
