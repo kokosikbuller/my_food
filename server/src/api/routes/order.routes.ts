@@ -3,12 +3,19 @@ import { authMiddleware } from "../middlewares/auth.middleware";
 import orderContoller from "../controllers/order.contoller";
 import { db } from "../../infrastructure/db/client";
 import { ordersSchema } from "../../infrastructure/db/schema/orders";
+import { createPaymentUseCase } from "../../application/payments/use-cases/create-payment.usecase";
+import { monoClient } from "../../infrastructure/payments/mono.client";
 
 export const ordersRoutes = new Elysia({ prefix: "/orders" })
   //NOTE: Remove test route
   .get("/", async () => {
-    // return await basketController.getBasketProducts(userId);
-    return await db.select().from(ordersSchema)
+    const order =  await db.select().from(ordersSchema);
+
+    if(!order) {
+      return { message: 'Error' };
+    }
+
+    return {order}
   })
   .post('/create', async ({userId}) => {
     return await orderContoller.craete(userId);
