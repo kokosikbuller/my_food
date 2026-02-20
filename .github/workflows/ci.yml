@@ -6,8 +6,12 @@ on:
       - main
 
 jobs:
-  test:
+  server-test:
     runs-on: ubuntu-latest
+
+    default:
+      run: 
+        working-directory: server
 
     steps:
       - name: Checkout
