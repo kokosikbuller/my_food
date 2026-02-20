@@ -2,10 +2,12 @@
   "name": "server",
   "version": "1.0.50",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "bun test",
     "dev": "bun run --watch src/index.ts",
     "db_generate": "bunx drizzle-kit generate",
-    "db_migrate": "bunx drizzle-kit migrate"
+    "db_migrate": "bunx drizzle-kit migrate",
+    "seed": "bun run src/infrastructure/db/seed/seed.ts",
+    "seed:reset": "bun run src/infrastructure/db/seed/seed.ts --reset",
   },
   "dependencies": {
     "@elysiajs/jwt": "^1.4.0",
