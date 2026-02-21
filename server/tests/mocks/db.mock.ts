@@ -1,5 +1,5 @@
-import type { InferSelectModel } from 'drizzle-orm';
-import { productsSchema } from '../../src/infrastructure/db/schema/products';
+import { InferSelectModel } from "drizzle-orm";
+import { productsSchema } from "../../src/infrastructure/db/schema/products";
 
 type Product = InferSelectModel<typeof productsSchema>;
 
@@ -30,50 +30,8 @@ export const mockProducts: Product[] = [
   },
 ];
 
-export const mockDb = {
-  select: () => ({
-    from: (table: any) => {
-      if (table === productsSchema) {
-        return {
-          all: async () => mockProducts,
-          where: (condition: any) => ({
-            async all() {
-              return mockProducts;
-            },
-            async get() {
-              return mockProducts[0] || null;
-            },
-          }),
-        };
-      }
-      throw new Error('Mock: unknown table');
-    },
-  }),
 
-  query: {
-    products: {
-      findMany: async () => mockProducts,
-      findFirst: async () => mockProducts[0] || null,
-    },
-  },
-
-  insert: (table: any) => ({
-    values: (values: any) => ({
-      returning: async () => [{ ...values, id: crypto.randomUUID(), createdAt: new Date(), updatedAt: new Date() }],
-    }),
-  }),
-
-  update: () => ({
-    set: () => ({
-      where: () => ({
-        returning: async () => [mockProducts[0]],
-      }),
-    }),
-  }),
-
-  delete: () => ({
-    where: () => ({
-      returning: async () => [],
-    }),
-  }),
+export const mockProductRepository = {
+  getAll: async () => mockProducts,
+  getByIds: async (ids: string[]) => mockProducts,
 };

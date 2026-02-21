@@ -1,12 +1,19 @@
-import { describe, expect, it, beforeAll, afterAll } from 'bun:test';
-import { Elysia } from 'elysia';
-import { productsRoutes } from '../../src/api/routes/product.routes';
-import { mockDb } from '../mocks/db.mock';
+import { Elysia } from "elysia";
+import { createProductsRoutes } from "../../src/api/routes/product.routes";
+import { ProductsController } from "../../src/api/controllers/product.controller";
+import { GetProductsUseCase } from "../../src/application/products/use-cases/get-products.usecase";
+import { describe, expect, it } from "bun:test";
+import { mockProducts } from "../mocks/db.mock";
+
+const mockRepo = {
+  getAll: async () => mockProducts,
+};
+
+const useCase = new GetProductsUseCase(mockRepo as any);
+const controller = new ProductsController(useCase);
 
 const app = new Elysia()
-  .state('db', mockDb)
-  .use(productsRoutes);
-
+  .use(createProductsRoutes(controller));
 
 describe('GET /products', () => {
   it('Get /products => should return 200 and array of products', async () => {
