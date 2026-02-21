@@ -1,5 +1,10 @@
 import { Elysia } from "elysia";
-import productsController from "../controllers/product.controller";
+import type { ProductsController } from "../controllers/product.controller";
 
-export const productsRoutes = new Elysia({ prefix: "/products" })
-  .get("/", async () => await productsController.getAll())
+export const createProductsRoutes = (
+  productController: ProductsController
+) =>
+  new Elysia({ prefix: "/products" })
+    .get("/", () => {
+      return productController.getAll();
+    });
