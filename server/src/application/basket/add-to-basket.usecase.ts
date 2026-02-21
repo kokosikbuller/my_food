@@ -1,26 +1,24 @@
-import basketItemsRepository from "../../domain/repositories/basket-items.repository";
-import basketRepository from "../../domain/repositories/basket.repository";
+import { BasketItemsRepository } from "../../domain/repositories/basket-items.repository";
+import { BasketRepository } from "../../domain/repositories/basket.repository";
 
-class AddToBasketUseCase {
+export class AddToBasketUseCase {
+  constructor(private basketRepository: BasketRepository, private basketItemsRepository: BasketItemsRepository) {}
+
   async execute(userId: string, productId: string) {
-    const basket = await basketRepository.getByUserId(userId);
+    const basket = await this.basketRepository.getByUserId(userId);
 
-    const item = await basketItemsRepository.getItem(
+    const item = await this.basketItemsRepository.getItem(
       basket.id,
       productId
     );
-
-    console.log('item', item);
     
     if (item) {
-      return basketItemsRepository.updateQuantity(
+      return this.basketItemsRepository.updateQuantity(
         item.id,
         item.quantity + 1
       );
     }
 
-    return basketItemsRepository.create(basket.id, productId, 1);
+    return this.basketItemsRepository.create(basket.id, productId, 1);
   }
 }
-
-export default new AddToBasketUseCase();

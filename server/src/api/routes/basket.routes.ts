@@ -1,8 +1,10 @@
 import { Elysia } from "elysia";
-import basketController from "../controllers/basket.controller";
+import { BasketController } from "../controllers/basket.controller";
 import { authMiddleware } from "../middlewares/auth.middleware";
 
-export const basketRoutes = new Elysia({ prefix: "/basket" })
+export const createBasketRouts = (
+  basketController: BasketController
+) => new Elysia({ prefix: "/basket" })
   .get("/", async ({ userId }) => {
     console.log('userId', userId);
     return await basketController.getBasketProducts(userId);

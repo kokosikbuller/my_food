@@ -1,12 +1,12 @@
-import basketItemsRepository from "../../domain/repositories/basket-items.repository";
-import basketRepository from "../../domain/repositories/basket.repository";
+import { BasketItemsRepository } from "../../domain/repositories/basket-items.repository";
+import { BasketRepository } from "../../domain/repositories/basket.repository";
 
-class GetBasketProductsUseCase {
+export class GetBasketProductsUseCase {
+  constructor(private basketRepository: BasketRepository, private basketItemsRepository: BasketItemsRepository) {}
+
   async execute(userId: string) {
-    const basket = await basketRepository.getByUserId(userId);
+    const basket = await this.basketRepository.getByUserId(userId);
 
-    return basketItemsRepository.getItemsByBasketId(basket.id);
+    return this.basketItemsRepository.getItemsByBasketId(basket.id);
   }
 }
-
-export default new GetBasketProductsUseCase();

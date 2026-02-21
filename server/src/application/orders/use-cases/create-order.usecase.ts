@@ -1,5 +1,5 @@
-import basketItemsRepository from "../../../domain/repositories/basket-items.repository";
-import basketRepository from "../../../domain/repositories/basket.repository";
+// import basketItemsRepository from "../../../domain/repositories/basket-items.repository";
+// import basketRepository from "../../../domain/repositories/basket.repository";
 import { orderItemsRepository } from "../../../domain/repositories/order-items.repository";
 import { orderRepository } from "../../../domain/repositories/order.repository";
 // import productRepository from "../../../domain/repositories/product.repository";
@@ -11,15 +11,15 @@ class CreateOrderUseCase {
   async execute(userId: string) {
     return db.transaction(async (tx) => {
 
-      const basket = await basketRepository.getByUserId(userId);
+      // const basket = await basketRepository.getByUserId(userId);
 
-      if (!basket) throw new Error("Basket not found");
+      // if (!basket) throw new Error("Basket not found");
 
-      const items = await basketItemsRepository.getItemsByBasketId(
-        basket.id
-      );
+      // const items = await basketItemsRepository.getItemsByBasketId(
+      //   basket.id
+      // );
 
-      if (!items.length) throw new Error("Basket is empty");
+      // if (!items.length) throw new Error("Basket is empty");
 
       // const products = await productRepository.getByIds(
       //   items.map(i => i.product.id)
