@@ -1,8 +1,11 @@
-import userRepository from "../../../domain/repositories/user.repository";
+import { UserRepository } from "../../../domain/repositories/user.repository";
 
-class GetMeUserUseCase {
+export class GetMeUserUseCase {
+  constructor(private userRepository: UserRepository) {}
+
   async execute({ id }: { id: string; }) {
-    const user = await userRepository.findById(id);
+    const user = await this.userRepository.findById(id);
+    
     if (!user[0]) {
       throw new Error("Invalid email or password");
     }
@@ -19,5 +22,3 @@ class GetMeUserUseCase {
     return resUser;
   }
 }
-
-export default new GetMeUserUseCase();

@@ -1,12 +1,14 @@
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import userRepository from "../../../domain/repositories/user.repository";
+import { UserRepository } from "../../../domain/repositories/user.repository";
 
 const JWT_SECRET = "secret_1234"; // change!!!!!
 
-class LoginUserUseCase {
+export class LoginUserUseCase {
+  constructor(private userRepository: UserRepository) {}
+
   async execute({ email, password }: { email: string; password: string }) {
-    const user = await userRepository.findByEmail(email);
+    const user = await this.userRepository.findByEmail(email);
     if (!user[0]) {
       throw new Error("Invalid email or password");
     }
@@ -30,4 +32,3 @@ class LoginUserUseCase {
   }
 }
 
-export default new LoginUserUseCase();
