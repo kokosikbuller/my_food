@@ -1,9 +1,9 @@
-import getProductsUsecase from '../../application/products/use-cases/get-products.usecase';
+import { GetProductsUseCase } from "../../application/products/use-cases/get-products.usecase";
 
-class ProductsController {
+export class ProductsController {
+  constructor(private getProductsUsecase: GetProductsUseCase) {}
+
   async getAll() {
-    return getProductsUsecase.execute();
+    return this.getProductsUsecase.execute();
   }
 };
-
-export default new ProductsController();
