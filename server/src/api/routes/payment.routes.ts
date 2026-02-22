@@ -1,19 +1,13 @@
 import { Elysia } from "elysia";
-import { updateStatusUseCase } from "../../application/orders/use-cases/update-status.usecase";
+import { PaymentController } from "../controllers/payment.controller";
 
-let dataLocal = {};
-
-export const paymentsRoutes = new Elysia({ prefix: "/payments" })
-  .post('/webhook', async (req: any) => {
-    console.log('Webhook', req);
-
-    // dataLocal = req.body;
+export const createPaymentRoutes = (
+  paymentController: PaymentController
+) => new Elysia({ prefix: "/payments" })
+  .post('/webhook', async (req: any) => {    
     if(req.body.status === 'success') {
-      await updateStatusUseCase.execute(req.body.reference, 'paid');
+      await paymentController.updateOrderStatus(req.body.reference);
     }
 
     return;
-  })
-  .get('/test', async () => {
-    return dataLocal
   })

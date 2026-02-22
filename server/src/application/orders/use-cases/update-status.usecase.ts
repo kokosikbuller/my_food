@@ -1,10 +1,10 @@
-import { orderRepository } from "../../../domain/repositories/order.repository";
+import { OrderRepository } from "../../../domain/repositories/order.repository";
 import { OrderStatus } from "../../../types";
 
-class UpdateStatusUseCase {
+export class UpdateStatusUseCase {
+  constructor(private orderRepository: OrderRepository) {}
+
   async execute(orderId: string, status: OrderStatus) {
-    await orderRepository.updateStatus(orderId, status);
+    await this.orderRepository.updateStatus(orderId, status);
   }
 }
-
-export const updateStatusUseCase = new UpdateStatusUseCase();

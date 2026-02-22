@@ -61,6 +61,6 @@ export class BasketItemsRepository {
     const executor = tx ?? this.db;
     return await executor
       .delete(basketItemsSchema)
-      .where(eq(basketItemsSchema.id, id));
+      .where(eq(basketItemsSchema.basketId, id));
   }
 }

@@ -1,13 +1,15 @@
 
-import { createOrderUseCase } from "../../application/orders/use-cases/create-order.usecase";
-import { createPaymentUseCase } from "../../application/payments/use-cases/create-payment.usecase";
+import { CreateOrderUseCase } from "../../application/orders/use-cases/create-order.usecase";
+import { CreatePaymentUseCase } from "../../application/payments/use-cases/create-payment.usecase";
 import { monoClient } from "../../infrastructure/payments/mono.client";
 
-class OrderController {
-  async craete(userId: string) {
-    const { order } = await createOrderUseCase.execute(userId);
+export class OrderController {
+  constructor(private createOrderUseCase: CreateOrderUseCase, private createPaymentUseCase: CreatePaymentUseCase) {}
 
-    const paymentPayload = await createPaymentUseCase.execute(order.id);
+  async craete(userId: string) {
+    const { order } = await this.createOrderUseCase.execute(userId);
+
+    const paymentPayload = await this.createPaymentUseCase.execute(order.id);
 
     if (!paymentPayload) {
       throw new Error('Error payload');
@@ -18,5 +20,3 @@ class OrderController {
     return { order, monoData };
   }
 };
-
-export default new OrderController();
