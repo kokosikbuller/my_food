@@ -1,5 +1,5 @@
 import { PostgresJsDatabase } from "drizzle-orm/postgres-js";
-import { db } from "../../infrastructure/db/client";
+import { DBType } from "../../infrastructure/db/client";
 import { ordersSchema } from "../../infrastructure/db/schema/orders";
 import { eq } from "drizzle-orm";
 import { OrderStatus } from "../../types";
@@ -17,22 +17,24 @@ export interface OrderRepositoryT {
   updateStatus(id: string, status: OrderStatus): Promise<void>;
 }
 
-class OrderRepository {
+export class OrderRepository {
+  constructor(private db: DBType) {}
+
   create(data: CreateOrderParams, tx?: PostgresJsDatabase<any>) {
-		const executor = tx ?? db;
+		const executor = tx ?? this.db;
 
     return executor.insert(ordersSchema).values(data).returning();
   }
 
   findByUserId(userId: string) {
-    return db
+    return this.db
     	.select()
       .from(ordersSchema)
       .where(eq(ordersSchema.userId, userId));
   }
 
   findById(id: string) {
-    return db
+    return this.db
 			.select()
       .from(ordersSchema)
       .where(eq(ordersSchema.id, id))
@@ -40,11 +42,9 @@ class OrderRepository {
   }
 
   updateStatus(id: string, status: OrderStatus) {
-    return db
+    return this.db
 			.update(ordersSchema)
       .set({ status })
       .where(eq(ordersSchema.id, id));
   }
 }
-
-export const orderRepository = new OrderRepository();

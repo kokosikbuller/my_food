@@ -1,18 +1,18 @@
-import { eq, inArray } from "drizzle-orm";
-import { db } from "../../infrastructure/db/client";
+import { inArray } from "drizzle-orm";
 import { productsSchema } from "../../infrastructure/db/schema/products";
+import { DBType } from "../../infrastructure/db/client";
 
-class ProductRepository {
+export class ProductRepository {
+  constructor(private db: DBType) {}
+
   async getAll() {
-    return db.select().from(productsSchema);
+    return this.db.select().from(productsSchema);
   }
 
   async getByIds(ids: string[]) {
-    return db
+    return this.db
     .select()
     .from(productsSchema)
     .where(inArray(productsSchema.id, ids));
   }
 }
-
-export default new ProductRepository();

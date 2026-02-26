@@ -1,12 +1,12 @@
 import { Elysia } from "elysia";
 import { authMiddleware } from "../middlewares/auth.middleware";
-import orderContoller from "../controllers/order.contoller";
+import { OrderController } from "../controllers/order.contoller";
 import { db } from "../../infrastructure/db/client";
 import { ordersSchema } from "../../infrastructure/db/schema/orders";
-import { createPaymentUseCase } from "../../application/payments/use-cases/create-payment.usecase";
-import { monoClient } from "../../infrastructure/payments/mono.client";
 
-export const ordersRoutes = new Elysia({ prefix: "/orders" })
+export const createOrdersRoutes = (
+  orderContoller: OrderController
+) => new Elysia({ prefix: '/orders' })
   //NOTE: Remove test route
   .get("/", async () => {
     const order =  await db.select().from(ordersSchema);

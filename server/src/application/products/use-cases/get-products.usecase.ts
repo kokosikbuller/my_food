@@ -1,12 +1,10 @@
-import productRepository from "../../../domain/repositories/product.repository";
+import { ProductRepository } from "../../../domain/repositories/product.repository";
 
-class GetProductsUseCase {
-  private productRepo = productRepository;
+export class GetProductsUseCase {
+  constructor(private productRepo: ProductRepository) {}
 
   async execute() {
     const products = await this.productRepo.getAll();
     return products;
   }
 }
-
-export default new GetProductsUseCase();

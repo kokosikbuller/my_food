@@ -1,27 +1,33 @@
-import basketItemsRepository from "../../../domain/repositories/basket-items.repository";
-import basketRepository from "../../../domain/repositories/basket.repository";
-import { orderItemsRepository } from "../../../domain/repositories/order-items.repository";
-import { orderRepository } from "../../../domain/repositories/order.repository";
-import productRepository from "../../../domain/repositories/product.repository";
+import { BasketItemsRepository } from "../../../domain/repositories/basket-items.repository";
+import { BasketRepository } from "../../../domain/repositories/basket.repository";
+import { OrderItemsRepository } from "../../../domain/repositories/order-items.repository";
+import { OrderRepository } from "../../../domain/repositories/order.repository";
+import { ProductRepository } from "../../../domain/repositories/product.repository";
 import { db } from "../../../infrastructure/db/client";
-import { monoClient } from "../../../infrastructure/payments/mono.client";
-import { createPaymentUseCase } from "../../payments/use-cases/create-payment.usecase";
 
-class CreateOrderUseCase {
+export class CreateOrderUseCase {
+  constructor(
+    private basketRepository: BasketRepository,
+    private basketItemsRepository: BasketItemsRepository,
+    private productRepository: ProductRepository,
+    private orderRepository: OrderRepository,
+    private orderItemsRepository: OrderItemsRepository
+  ) { }
+
   async execute(userId: string) {
     return db.transaction(async (tx) => {
 
-      const basket = await basketRepository.getByUserId(userId);
+      const basket = await this.basketRepository.getByUserId(userId);
 
       if (!basket) throw new Error("Basket not found");
 
-      const items = await basketItemsRepository.getItemsByBasketId(
+      const items = await this.basketItemsRepository.getItemsByBasketId(
         basket.id
       );
 
       if (!items.length) throw new Error("Basket is empty");
 
-      const products = await productRepository.getByIds(
+      const products = await this.productRepository.getByIds(
         items.map(i => i.product.id)
       );
 
@@ -40,7 +46,7 @@ class CreateOrderUseCase {
         };
       });
 
-      const [order] = await orderRepository.create(
+      const [order] = await this.orderRepository.create(
         {
           userId,
           totalPrice: total,
@@ -49,7 +55,7 @@ class CreateOrderUseCase {
         tx
       );
 
-      await orderItemsRepository.createMany(
+      await this.orderItemsRepository.createMany(
         orderItems.map(i => ({
           ...i,
           orderId: order.id,
@@ -57,21 +63,9 @@ class CreateOrderUseCase {
         tx
       );
 
-      await basketItemsRepository.clear(basket.id, tx);
+      await this.basketItemsRepository.clear(basket.id, tx);
 
-      // console.log('order', order);
-
-      // const paymentPayload = await createPaymentUseCase.execute(order.id);
-
-      // if(!paymentPayload) {
-      //   throw new Error('Error payload');
-      // }
-
-      // const monoData = await monoClient.createInvoice(paymentPayload);
-
-      return {order};
+      return { order };
     });
   }
 }
-
-export const createOrderUseCase = new CreateOrderUseCase();

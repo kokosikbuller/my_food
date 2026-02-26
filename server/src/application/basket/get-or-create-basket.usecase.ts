@@ -1,18 +1,15 @@
-import basketRepository from "../../domain/repositories/basket.repository";
+import { BasketRepository } from "../../domain/repositories/basket.repository";
 
-class GetOrCreateBasketUseCase {
+export class GetOrCreateBasketUseCase {
+  constructor(private basketRepository: BasketRepository) {}
+
   async execute(userId: string) {
-    const basket = await basketRepository.getByUserId(userId);
+    const basket = await this.basketRepository.getByUserId(userId);
 
     if (basket) {
-      console.log('get');
       return basket;
     }
 
-    console.log('create');
-
-    return basketRepository.create(userId);
+    return this.basketRepository.create(userId);
   }
 }
-
-export default new GetOrCreateBasketUseCase();

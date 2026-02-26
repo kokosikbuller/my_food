@@ -1,19 +1,21 @@
 import { and, eq } from "drizzle-orm";
-import { db } from "../../infrastructure/db/client";
+import { DBType } from "../../infrastructure/db/client";
 import { basketItemsSchema } from "../../infrastructure/db/schema/basket_items";
 import { productsSchema } from "../../infrastructure/db/schema/products";
 import { PostgresJsDatabase } from "drizzle-orm/postgres-js";
 
-class BasketItemsRepository {
+export class BasketItemsRepository {
+  constructor(private db: DBType) {}
+
   async create(basketId: string, productId: string, quantity: number) {
-    return db
+    return this.db
       .insert(basketItemsSchema)
       .values({ basketId, productId, quantity })
       .returning();
   }
 
   async getItemsByBasketId(basketId: string) {
-    return db
+    return this.db
       .select({
         quantity: basketItemsSchema.quantity,
         id: basketItemsSchema.id,
@@ -33,7 +35,7 @@ class BasketItemsRepository {
   }
 
   async updateQuantity(id: string, quantity: number) {
-    return await db
+    return await this.db
       .update(basketItemsSchema)
       .set({ quantity })
       .where(eq(basketItemsSchema.id, id))
@@ -41,7 +43,7 @@ class BasketItemsRepository {
   }
 
   async getItem(basketId: string, productId: string) {
-    const [item] = await db
+    const [item] = await this.db
       .select()
       .from(basketItemsSchema)
       .where(
@@ -56,11 +58,9 @@ class BasketItemsRepository {
   }
 
   async clear(id: string, tx?: PostgresJsDatabase<any>) {
-    const executor = tx ?? db;
+    const executor = tx ?? this.db;
     return await executor
       .delete(basketItemsSchema)
-      .where(eq(basketItemsSchema.id, id));
+      .where(eq(basketItemsSchema.basketId, id));
   }
 }
-
-export default new BasketItemsRepository();

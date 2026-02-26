@@ -1,5 +1,5 @@
 import { PostgresJsDatabase } from "drizzle-orm/postgres-js";
-import { db } from "../../infrastructure/db/client";
+import { DBType } from "../../infrastructure/db/client";
 import { orderItemsSchema } from "../../infrastructure/db/schema/order_items";
 import { eq } from "drizzle-orm";
 
@@ -16,20 +16,20 @@ export interface OrderItemsRepositoryT {
   findByOrderId(orderId: string): Promise<any[]>;
 }
 
-class OrderItemsRepository {
+export class OrderItemsRepository {
+  constructor(private db: DBType) {}
+
   async createMany(items: CreateOrderItemParams[], tx?: PostgresJsDatabase<any>) {
     if (!items.length) return;
-		const executor = tx ?? db;
+		const executor = tx ?? this.db;
 
     await executor.insert(orderItemsSchema).values(items);
   }
 
   async findByOrderId(orderId: string) {
-    return await db
+    return await this.db
 			.select()
       .from(orderItemsSchema)
       .where(eq(orderItemsSchema.orderId, orderId));
   }
 }
-
-export const orderItemsRepository = new OrderItemsRepository();

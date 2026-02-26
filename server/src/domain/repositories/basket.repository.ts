@@ -1,14 +1,16 @@
 import { eq } from "drizzle-orm";
-import { db } from "../../infrastructure/db/client";
+import { DBType } from "../../infrastructure/db/client";
 import { basketsSchema } from "../../infrastructure/db/schema/basket";
 
-class BasketRepository {
+export class BasketRepository {
+	constructor(private db: DBType) {}
+
 	async create(userId: string) {
-		return db.insert(basketsSchema).values({ userId }).returning();
+		return this.db.insert(basketsSchema).values({ userId }).returning();
 	}
 
 	async getByUserId(userId: string) {
-		const [basket] = await db.select()
+		const [basket] = await this.db.select()
 			.from(basketsSchema)
 			.where(eq(basketsSchema.userId, userId))
 			.limit(1);
@@ -16,5 +18,3 @@ class BasketRepository {
 		return basket ?? null;
 	}
 }
-
-export default new BasketRepository();

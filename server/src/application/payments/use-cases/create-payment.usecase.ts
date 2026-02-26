@@ -1,17 +1,19 @@
-import { orderItemsRepository } from "../../../domain/repositories/order-items.repository";
-import { orderRepository } from "../../../domain/repositories/order.repository";
+import { OrderItemsRepository } from "../../../domain/repositories/order-items.repository";
+import { OrderRepository } from "../../../domain/repositories/order.repository";
 
-class CreatePaymentUseCase {
+export class CreatePaymentUseCase {
+  constructor(private orderRepository: OrderRepository, private orderItemsRepository: OrderItemsRepository) {}
+
   async execute(orderId: string) {
 
-    const [order] = await orderRepository.findById(orderId);
+    const [order] = await this.orderRepository.findById(orderId);
     if (!order) throw new Error("Order not found");
 
     if (order.status !== "pending") {
       throw new Error("Order already paid");
     }
 
-    const items = await orderItemsRepository.findByOrderId(orderId);
+    const items = await this.orderItemsRepository.findByOrderId(orderId);
 
     const payload = {
       amount: order.totalPrice,
@@ -38,7 +40,7 @@ class CreatePaymentUseCase {
       successUrl: "https://myapp.com/payment/success",
       failUrl: "https://myapp.com/payment/fail",
 
-      webHookUrl: "https://e6b5-213-110-96-133.ngrok-free.app/payments/webhook",
+      webHookUrl: "https://2a82-213-110-96-133.ngrok-free.app/payments/webhook",
 
       validity: 3600,
     };
@@ -46,5 +48,3 @@ class CreatePaymentUseCase {
     return payload;
   }
 }
-
-export const createPaymentUseCase = new CreatePaymentUseCase();
