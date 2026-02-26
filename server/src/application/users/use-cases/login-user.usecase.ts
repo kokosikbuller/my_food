@@ -2,7 +2,7 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { UserRepository } from "../../../domain/repositories/user.repository";
 
-const JWT_SECRET = "secret_1234"; // change!!!!!
+const JWT_SECRET = "secret_1234"; // TODO: move to .env
 
 export class LoginUserUseCase {
   constructor(private userRepository: UserRepository) {}
